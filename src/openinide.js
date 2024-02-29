@@ -22,7 +22,7 @@
         consoleLog('console.log', message);
     };
 
-    console.log('Open In IntelliJ - Extension loaded');
+    console.log('Open In Vim - Extension loaded');
 
     if (typeof localStorage["enabled"] === "undefined") {
         localStorage["enabled"] = "1"; // default
@@ -65,7 +65,7 @@
 
     const readURLContent = function(url, thisServer, filePath, hasRootPath, urlOrig, lineNumber) {
 
-        console.log('Open In IntelliJ - calling IntelliJ API:', url);
+        console.log('Open In Vim - calling Vim API:', url);
 
         let xhr = new XMLHttpRequest();
 
@@ -77,31 +77,31 @@
                 if (xhr) {
                     switch (xhr.status) {
                         case 200:
-                            console.log('Open In IntelliJ - IntelliJ API response:', 'HTTP 200 OK - file opened in IntelliJ successfully');
+                            console.log('Open In Vim - Vim API response:', 'HTTP 200 OK - file opened in Vim successfully');
                             bOK = true;
                             break;
                         case 0:
-                            console.log('Open In IntelliJ - IntelliJ API response:', 'Error 0');
-                            devConsoleError('Couldn\'t open file in IntelliJ! Please first start your IDE and open the project.\n(IntelliJ API Request URL: ' + url + ')');
+                            console.log('Open In Vim - Vim API response:', 'Error 0');
+                            devConsoleError('Couldn\'t open file in Vim! Please first start your IDE and open the project.\n(Vim API Request URL: ' + url + ')');
                             break;
                         case 404:
-                            console.log('Open In IntelliJ - IntelliJ API response:', 'HTTP Error 404');
+                            console.log('Open In Vim - Vim API response:', 'HTTP Error 404');
                             let sErrorAdd = 'Please first open the project in your IDE.';
                             if (!hasRootPath) {
                                 sErrorAdd += '\nAlso make sure the file ' + filePath + ' can be found relative to your project root. Otherwise please map your web document root to the appropriate folder within your project. See options: chrome-extension://jeanncccmcklcoklpimhmpkgphdingci/options.html\n';
                             }
-                            devConsoleError('Couldn\'t open file in IntelliJ: File not found! ' + sErrorAdd + '\n(IntelliJ API Request URL: ' + url + ')');
+                            devConsoleError('Couldn\'t open file in Vim: File not found! ' + sErrorAdd + '\n(Vim API Request URL: ' + url + ')');
                             break;
                         default:
-                            console.log('Open In IntelliJ - IntelliJ API response:', 'HTTP Error ' + xhr.status);
-                            devConsoleError('Couldn\'t open file in IntelliJ! HTTP error ' + xhr.status + ' for IntelliJ API Request URL ' + url);
+                            console.log('Open In Vim - Vim API response:', 'HTTP Error ' + xhr.status);
+                            devConsoleError('Couldn\'t open file in Vim! HTTP error ' + xhr.status + ' for Vim API Request URL ' + url);
                             break;
                     }
                     xhr = null;
                 }
 
                 if (!bOK) {
-                    console.log('Open In IntelliJ - failed, opening resource in Chrome instead');
+                    console.log('Open In Vim - failed, opening resource in Chrome instead');
                     openInChromePanel(urlOrig, lineNumber);
                 }
             }
@@ -115,7 +115,7 @@
 
 
 
-    chrome.devtools.panels.create("Open In IntelliJ", "logo-48px.png", "panel.html");
+    chrome.devtools.panels.create("Open In Vim", "logo-48px.png", "panel.html");
 
 
 
@@ -126,7 +126,7 @@
 
         const url = resource.url;
 
-        console.log('Open In IntelliJ - received open resource event:', url, lineNumber);
+        console.log('Open In Vim - received open resource event:', url, lineNumber);
 
         const urlParse = parseUri(url);
 
@@ -147,15 +147,15 @@
         if (localStorage["enabled"] != "1") {
             // Extension is disabled => Open in Chrome Resource Panel
             openInChrome = true;
-            console.log('Open In IntelliJ - You disabled this extension, resources will open in Chrome. To enable this extension again click the "Open In IntelliJ" tab in the Devtools');
+            console.log('Open In Vim - You disabled this extension, resources will open in Chrome. To enable this extension again click the "Open In Vim" tab in the Devtools');
         }
         if (urlParse.protocol == "debugger") {
             // Links like 'debugger:///VM1192' => internal Chrome stuff, open in Chrome
             openInChrome = true;
         }
         if (typeof lineNumber === "undefined") {
-            // No line number => Resource was most likely opened via right-click "Open Using Open In IntelliJ"
-            //    => force open with intellij
+            // No line number => Resource was most likely opened via right-click "Open Using Open In Vim"
+            //    => force open with vim
             openInChrome = false;
         }
          if (urlParse.protocol == "webpack") {
@@ -166,7 +166,7 @@
 
 
         if (openInChrome) {
-            console.log('Open In IntelliJ - opening resource in Chrome:', url, lineNumber)
+            console.log('Open In Vim - opening resource in Chrome:', url, lineNumber)
             openInChromePanel(url, lineNumber);
         }
         else {
@@ -208,15 +208,15 @@
                 hasRootPath = true;
             }
 
-            console.log('Open In IntelliJ - destination resource path:', fileString);
+            console.log('Open In Vim - destination resource path:', fileString);
 
-            const intellijServer = localStorage["intellijserver"] || 'http://localhost:63342';
+            const vimServer = localStorage["vimserver"] || 'http://localhost:63342';
 
             //
-            // IntelliJ REST API!
+            // Vim REST API!
             // http://develar.org/idea-rest-api/
             //
-            let ideOpenUrl = intellijServer + '/api/file?file=' + encodeURI(fileString);
+            let ideOpenUrl = vimServer + '/api/file?file=' + encodeURI(fileString);
 
             if (lineNumber) {
                 ideOpenUrl += '&line=' + lineNumber;
@@ -228,11 +228,11 @@
 
 
 
-    const port = chrome.runtime.connect({name: 'openinintellij'});
+    const port = chrome.runtime.connect({name: 'openinvim'});
 
     port.onMessage.addListener(function(msg) {
 
-        console.log('Open In IntelliJ - opening file from IntelliJ in Chrome', msg);
+        console.log('Open In Vim - opening file from Vim in Chrome', msg);
 
         const file = 'file://'+decodeURIComponent(msg.file);
         let line = parseInt(msg.line);

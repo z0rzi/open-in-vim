@@ -35,13 +35,13 @@
             document.getElementById('root' + i).value = (config[i] && config[i].rootPath) || '';
         }
         
-        if (!localStorage["intellijserver"]) {
+        if (!localStorage["vimserver"]) {
             // load default
-            localStorage["intellijserver"] = "http://localhost:63342";
+            localStorage["vimserver"] = "http://localhost:63342";
         }
 
-        if (localStorage["intellijserver"]) {
-            document.getElementById("intellijserver").value = localStorage["intellijserver"];
+        if (localStorage["vimserver"]) {
+            document.getElementById("vimserver").value = localStorage["vimserver"];
         }
     }
 
@@ -66,7 +66,7 @@
 
         localStorage["rootPaths"] = JSON.stringify(rootPaths);
 
-        localStorage["intellijserver"] = document.getElementById("intellijserver").value;
+        localStorage["vimserver"] = document.getElementById("vimserver").value;
 
         loadOptions(); // reload
 

@@ -3,7 +3,7 @@
     
     var thePort = null;
     chrome.runtime.onConnect.addListener(function(port) {
-        if (port.name !== "openinintellij") return;
+        if (port.name !== "openinvim") return;
         thePort = port;
     });
     
